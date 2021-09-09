@@ -2,7 +2,6 @@
 
 namespace WinTail
 {
-    #region Program
     class Program
     {
         public static ActorSystem MyActorSystem;
@@ -13,14 +12,16 @@ namespace WinTail
             MyActorSystem = ActorSystem.Create("MyActorSystem");
 
             // create our actors
-            //var consoleWriterProps = Props.Create(typeof(ConsoleWriterActor)); // using typeof syntax. note: do not use this normally
-            var consoleWriterProps = Props.Create<ConsoleWriterActor>(); // using generic syntax
+            var consoleWriterProps = Props.Create<ConsoleWriterActor>();
             var consoleWriterActor = MyActorSystem.ActorOf(consoleWriterProps, "consoleWriterActor");
 
-            var validationProps = Props.Create(() => new ValidationActor(consoleWriterActor)); // using lambda props syntax
-            var validationActor = MyActorSystem.ActorOf(validationProps, "validationActor");
+            var tailCoOrdinatorProps = Props.Create(() => new TailCoordinatorActor());
+            var tailCoOrdinatorActor = MyActorSystem.ActorOf(tailCoOrdinatorProps, "tailCoOrdinatorActor");
 
-            var consoleReaderProps = Props.Create<ConsoleReaderActor>(validationActor); // using generic syntax
+            var fileValidatorProps = Props.Create(() => new FileValidatorActor(consoleWriterActor, tailCoOrdinatorActor));
+            var fileValidatorActor = MyActorSystem.ActorOf(fileValidatorProps, "fileValidatorActor");
+
+            var consoleReaderProps = Props.Create<ConsoleReaderActor>(fileValidatorActor);
             var consoleReaderActor = MyActorSystem.ActorOf(consoleReaderProps, "consoleReaderActor");
 
             // tell console reader to begin
@@ -30,5 +31,4 @@ namespace WinTail
             MyActorSystem.WhenTerminated.Wait();
         }
     }
-    #endregion
 }
