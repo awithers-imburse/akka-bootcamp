@@ -6,14 +6,10 @@ namespace WinTail
     public class FileValidatorActor : UntypedActor
     {
         private readonly IActorRef _consoleWriterActor;
-        private readonly IActorRef _tailCoOrdinatorActor;
 
-        public FileValidatorActor(
-            IActorRef consoleWriterActor, 
-            IActorRef tailCoOrdinatorActor)
+        public FileValidatorActor(IActorRef consoleWriterActor)
         {
             _consoleWriterActor = consoleWriterActor;
-            _tailCoOrdinatorActor = tailCoOrdinatorActor;
         }
 
         protected override void OnReceive(object message)
@@ -40,7 +36,7 @@ namespace WinTail
                         new Messages.InputSuccess($"Starting processing for {filePath}"));
 
                     // start co-ordinator
-                    _tailCoOrdinatorActor.Tell(
+                    Context.ActorSelection("akka://MyActorSystem/user/tailCoOrdinatorActor").Tell(
                         new TailCoordinatorActor.StartTail(filePath, _consoleWriterActor));
                 }
                 else
