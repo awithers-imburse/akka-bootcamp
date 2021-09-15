@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 using Akka.Actor;
+using System.Windows.Forms;
 
 namespace ChartApp.Actors
 {
@@ -19,23 +20,47 @@ namespace ChartApp.Actors
         private int _xPosCounter;
 
         private readonly Chart _chart;
+        private readonly Button _pauseButton;
         private Dictionary<string, Series> _seriesIndex;
 
-        public ChartingActor(Chart chart) 
-            : this(chart, new Dictionary<string, Series>())
+        public ChartingActor(Chart chart, Button pauseButton) 
+            : this(chart, pauseButton, new Dictionary<string, Series>())
         { }
 
         public ChartingActor(
-            Chart chart, 
+            Chart chart,
+            Button pauseButton,
             Dictionary<string, Series> seriesIndex)
         {
             _chart = chart;
+            _pauseButton = pauseButton;
             _seriesIndex = seriesIndex;
 
+            Charting();
+        }
+
+        private void Charting()
+        {
             Receive<InitializeChart>(HandleInitialize);
             Receive<AddSeries>(HandleAddSeries);
             Receive<RemoveSeries>(HandleRemoveSeries);
             Receive<Metric>(HandleMetrics);
+
+            Receive<TogglePause>(pause =>
+            {
+                SetPauseButtonText(true);
+                BecomeStacked(Paused);
+            });
+        }
+
+        private void Paused()
+        {
+            Receive<Metric>(metric => HandleMetricsPaused(metric));
+            Receive<TogglePause>(pause =>
+            {
+                SetPauseButtonText(false);
+                UnbecomeStacked();
+            });
         }
 
         #region Individual Message Type Handlers
@@ -85,8 +110,8 @@ namespace ChartApp.Actors
 
         private void HandleRemoveSeries(RemoveSeries series)
         {
-            if (!string.IsNullOrEmpty(series.SeriesName) &&
-                _seriesIndex.ContainsKey(series.SeriesName))
+            if (!string.IsNullOrEmpty(series.SeriesName) 
+                && _seriesIndex.ContainsKey(series.SeriesName))
             {
                 var seriesToRemove = _seriesIndex[series.SeriesName];
                 _seriesIndex.Remove(series.SeriesName);
@@ -97,12 +122,27 @@ namespace ChartApp.Actors
 
         private void HandleMetrics(Metric metric)
         {
-            if (!string.IsNullOrEmpty(metric.Series) &&
-                _seriesIndex.ContainsKey(metric.Series))
+            if (!string.IsNullOrEmpty(metric.Series) 
+                && _seriesIndex.ContainsKey(metric.Series))
             {
                 var series = _seriesIndex[metric.Series];
                 series.Points.AddXY(_xPosCounter++, metric.CounterValue);
                 while (series.Points.Count > MaxPoints) series.Points.RemoveAt(0);
+                SetChartBoundaries();
+            }
+        }
+
+        private void HandleMetricsPaused(Metric metric)
+        {
+            if (!string.IsNullOrEmpty(metric.Series) 
+                && _seriesIndex.ContainsKey(metric.Series))
+            {
+                var series = _seriesIndex[metric.Series];
+                series.Points.AddXY(_xPosCounter++, 0.0d);
+
+                while(series.Points.Count > MaxPoints)
+                    series.Points.RemoveAt(0);
+
                 SetChartBoundaries();
             }
         }
@@ -135,6 +175,9 @@ namespace ChartApp.Actors
                 area.AxisY.Maximum = maxAxisY;
             }
         }
+
+        private void SetPauseButtonText(bool paused) => 
+            _pauseButton.Text = paused ? "RESUME ->" : "PAUSE ||";
 
         #region Messages
 
@@ -173,6 +216,11 @@ namespace ChartApp.Actors
                 SeriesName = seriesName;
             }
         }
+        
+        /// <summary>
+        /// Toggles the pausing between charts
+        /// </summary>
+        public class TogglePause { }
 
         #endregion
     }

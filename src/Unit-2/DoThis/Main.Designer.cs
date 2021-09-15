@@ -37,15 +37,17 @@ namespace ChartApp
             this.btnCpu = new System.Windows.Forms.Button();
             this.btnMemory = new System.Windows.Forms.Button();
             this.btnDisk = new System.Windows.Forms.Button();
+            this.btnPauseResume = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.sysChart)).BeginInit();
             this.SuspendLayout();
             // 
             // btnCpu
             // 
             this.btnCpu.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCpu.Location = new System.Drawing.Point(562, 274);
+            this.btnCpu.Location = new System.Drawing.Point(1592, 864);
+            this.btnCpu.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
             this.btnCpu.Name = "btnCpu";
-            this.btnCpu.Size = new System.Drawing.Size(110, 41);
+            this.btnCpu.Size = new System.Drawing.Size(312, 129);
             this.btnCpu.TabIndex = 0;
             this.btnCpu.Text = "CPU (ON)";
             this.btnCpu.UseVisualStyleBackColor = true;
@@ -54,9 +56,10 @@ namespace ChartApp
             // btnMemory
             // 
             this.btnMemory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnMemory.Location = new System.Drawing.Point(562, 321);
+            this.btnMemory.Location = new System.Drawing.Point(1592, 1012);
+            this.btnMemory.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
             this.btnMemory.Name = "btnMemory";
-            this.btnMemory.Size = new System.Drawing.Size(110, 41);
+            this.btnMemory.Size = new System.Drawing.Size(312, 129);
             this.btnMemory.TabIndex = 1;
             this.btnMemory.Text = "MEMORY (OFF)";
             this.btnMemory.UseVisualStyleBackColor = true;
@@ -65,13 +68,26 @@ namespace ChartApp
             // btnDisk
             // 
             this.btnDisk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDisk.Location = new System.Drawing.Point(562, 368);
+            this.btnDisk.Location = new System.Drawing.Point(1592, 1161);
+            this.btnDisk.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
             this.btnDisk.Name = "btnDisk";
-            this.btnDisk.Size = new System.Drawing.Size(110, 41);
+            this.btnDisk.Size = new System.Drawing.Size(312, 129);
             this.btnDisk.TabIndex = 2;
             this.btnDisk.Text = "DISK (OFF)";
             this.btnDisk.UseVisualStyleBackColor = true;
             this.btnDisk.Click += new System.EventHandler(this.btnDisk_Click);
+            // 
+            // btnPauseResume
+            // 
+            this.btnPauseResume.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnPauseResume.Location = new System.Drawing.Point(1592, 604);
+            this.btnPauseResume.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
+            this.btnPauseResume.Name = "btnPauseResume";
+            this.btnPauseResume.Size = new System.Drawing.Size(312, 129);
+            this.btnPauseResume.TabIndex = 3;
+            this.btnPauseResume.Text = "PAUSE ||";
+            this.btnPauseResume.UseVisualStyleBackColor = true;
+            this.btnPauseResume.Click += new System.EventHandler(this.btnPauseResume_Click);
             // 
             // sysChart
             // 
@@ -91,15 +107,16 @@ namespace ChartApp
             this.sysChart.Text = "sysChart";
             // 
             // Main
-            //
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(17F, 41F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(684, 446);
+            this.ClientSize = new System.Drawing.Size(1938, 1407);
+            this.Controls.Add(this.btnPauseResume);
             this.Controls.Add(this.btnCpu);
             this.Controls.Add(this.btnMemory);
             this.Controls.Add(this.btnDisk);
             this.Controls.Add(this.sysChart);
-            this.Margin = new System.Windows.Forms.Padding(8, 9, 8, 9);
+            this.Margin = new System.Windows.Forms.Padding(23, 28, 23, 28);
             this.Name = "Main";
             this.Text = "System Metrics";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Main_FormClosing);
@@ -115,6 +132,7 @@ namespace ChartApp
         private System.Windows.Forms.Button btnCpu;
         private System.Windows.Forms.Button btnMemory;
         private System.Windows.Forms.Button btnDisk;
+        private Button btnPauseResume;
     }
 }
 
